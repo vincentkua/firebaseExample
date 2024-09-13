@@ -1,7 +1,9 @@
+import Auth from "./pages/Auth";
+
 const Providers = () => {
   return (
     <>
-      <p>Sample Firebase</p>
+      <Auth />
     </>
   );
 };
