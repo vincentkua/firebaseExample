@@ -6,7 +6,7 @@ import {
   signOut,
   User,
 } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth } from "../../firebaseConfig";
 
 const Auth = () => {
   const [user, setUser] = useState<User | null>(null); // Type is User or null
@@ -62,7 +62,7 @@ const Auth = () => {
   return (
     <div style={{ padding: "10px" }}>
       <h3>Current User</h3>
-      <span>{user?user.email:"Not Logged In"} </span>
+      <span>{user ? user.email : "Not Logged In"} </span>
       <button onClick={signOutUser}>Signout</button>
 
       <h3>Create User</h3>
