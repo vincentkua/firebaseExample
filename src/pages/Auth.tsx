@@ -9,17 +9,29 @@ import {
 import { auth } from "../../firebaseConfig";
 
 const Auth = () => {
-  const [user, setUser] = useState<User | null>(null); // Type is User or null
+  const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false); // State to track admin status
   const [newEmail, setNewEmail] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [signinEmail, setSigninEmail] = useState<string>("");
   const [signinPassword, setSigninPassword] = useState<string>("");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser); // currentUser can be null, so we allow that in the state
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        // Get the ID token and check for custom claims
+        try {
+          const tokenResult = await currentUser.getIdTokenResult();
+          setIsAdmin(!!tokenResult.claims.admin); // Check if 'admin' claim exists
+        } catch (error) {
+          console.error("Error getting ID token:", error);
+        }
+      } else {
+        setIsAdmin(false);
+      }
     });
-    return () => unsubscribe(); // Cleanup on component unmount
+    return () => unsubscribe();
   }, []);
 
   const addUser = async () => {
@@ -63,6 +75,7 @@ const Auth = () => {
     <div style={{ padding: "10px" }}>
       <h3>Current User</h3>
       <span>{user ? user.email : "Not Logged In"} </span>
+      {isAdmin && <span> (Admin)</span>} {/* Display if user is an admin */}
       <button onClick={signOutUser}>Signout</button>
 
       <h3>Create User</h3>
